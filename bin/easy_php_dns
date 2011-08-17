@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $num_args = $#ARGV + 1;
+if ($num_args != 1) {
+  print "\nNeed to pass in port as first argument\n";
+  exit;
+}
+
+my $port = $ARGV[0];
+
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+use Net::DNS::Nameserver;
+
+$0 = "easy_php_dns";
+
+sub reply_handler {
+  my ($qname, $qclass, $qtype, $peerhost,$query,$conn) = @_;
+  my ($rcode, @ans, @auth, @add);
+
+  print "Received query from $peerhost to ". $conn->{"sockhost"}. "\n";
+  $query->print;
+
+  if ($qtype eq "A") {
+    my ($ttl, $rdata) = (60, "127.0.0.1");
+    push @ans, Net::DNS::RR->new("$qname $ttl $qclass $qtype $rdata");
+    $rcode = "NOERROR";
+  } elsif ( $qname eq "foo.example.com" ) {
+    $rcode = "NOERROR";
+  } else {
+    $rcode = "NXDOMAIN";
+  }
+
+  # mark the answer as authoritive (by setting the 'aa' flag
+  return ($rcode, \@ans, \@auth, \@add, { aa => 1 });
+}
+
+my $ns = Net::DNS::Nameserver->new(
+  LocalAddr    => "127.0.0.1",
+  LocalPort    => $port,
+  ReplyHandler => \&reply_handler,
+  Verbose      => 1,
+) || die "couldn't create nameserver object\n";
+
+$ns->main_loop;
