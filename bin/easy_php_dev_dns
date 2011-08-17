@@ -26,7 +26,7 @@ sub reply_handler {
   $query->print;
 
   if ($qtype eq "A") {
-    my ($ttl, $rdata) = (3600, "127.0.0.1");
+    my ($ttl, $rdata) = (60, "127.0.0.1");
     push @ans, Net::DNS::RR->new("$qname $ttl $qclass $qtype $rdata");
     $rcode = "NOERROR";
   } elsif ( $qname eq "foo.example.com" ) {
