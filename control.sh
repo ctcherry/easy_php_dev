@@ -12,15 +12,15 @@ enable () {
   fi
 
   echo "- Setting up easy_php_dev_dns to start at boot"
-  cp -f ~/.easy_php_dev/lib/ctcherry.easy_php_dns.plist ~/Library/LaunchAgents/ > /dev/null 2>&1
+  cp -f ~/.easy_php_dev/lib/ctcherry.easy_php_dev_dns.plist ~/Library/LaunchAgents/ > /dev/null 2>&1
   
   BIN_PATH="/Users/$USER/.easy_php_dev/bin/easy_php_dev_dns"
   
-  sed -i '' "s,_BIN_PATH_,$BIN_PATH,g" ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
-  sed -i '' "s,_PORT_,$PORT,g" ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  sed -i '' "s,_BIN_PATH_,$BIN_PATH,g" ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
+  sed -i '' "s,_PORT_,$PORT,g" ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
   
-  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
-  launchctl load -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
+  launchctl load -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
 
   ########################
   # Apache
@@ -66,9 +66,9 @@ enable () {
   
   sudo mv /tmp/resolver_dev /etc/resolver/dev > /dev/null 2>&1
   
-  echo "- Creating test site phpdevtest.dev"
-  mkdir /Users/$USER/DevSites/phpdevtest.dev > /dev/null 2>&1
-  echo "<?php phpinfo(); ?>" > /Users/$USER/DevSites/phpdevtest.dev/index.php
+  echo "- Creating test site test.dev"
+  mkdir /Users/$USER/DevSites/test.dev > /dev/null 2>&1
+  echo "<?php phpinfo(); ?>" > /Users/$USER/DevSites/test.dev/index.php
 }
 
 disable() {
@@ -77,7 +77,7 @@ disable() {
   sudo rm /etc/resolver/dev > /dev/null 2>&1
   
   echo "- Stopping easy_php_dns, and preventing from starting at boot"
-  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
   
   echo "- Removing dynamic virtual host config /etc/apache2/other/${USER}_hosts.conf"
   sudo rm /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
@@ -99,7 +99,7 @@ uninstall() {
 
 if [ "$1" == "enable" ]; then
   enable
-  echo "Done, easy_dev_php enabled. Go to http://phpdevtest.dev to verify installation"
+  echo "Done, easy_dev_php enabled. Go to http://test.dev to verify installation"
   exit 0
 fi
 

@@ -3,7 +3,7 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>ctcherry.easy_php_dns</string>
+    <string>ctcherry.easy_php_dev_dns</string>
     <key>ProgramArguments</key>
     <array>
       <string>_BIN_PATH_</string>
