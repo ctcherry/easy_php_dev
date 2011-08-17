@@ -3,10 +3,11 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>name.chrischerry.easy_php_dns</string>
+    <string>ctcherry.easy_php_dns</string>
     <key>ProgramArguments</key>
     <array>
-      <string>_BIN_PATH_ _PORT_</string>
+      <string>_BIN_PATH_</string>
+      <string>_PORT_</string>
     </array>
     <key>KeepAlive</key>
     <dict>

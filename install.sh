@@ -1,31 +1,27 @@
 #!/bin/bash
-
-hash brew 2>&- || { echo >&2 "Homebrew neds to be installed, get it from https://github.com/mxcl/homebrew/wiki/installation"; exit 1; }
-  
+ 
 install () {
-  ########################
-  # dnsmasq
 
-  if [ -e /usr/local/sbin/dnsmasq ]; then
-    echo "- dnsmasq is already installed, skipping install"
+  if [ ! -e ~/.easy_php_dev_rc ]; then
+    PORT=$[ ( $RANDOM % 10000 )  + 10000 ]
+    echo $PORT > ~/.easy_php_dev_rc
+    echo "- Saved port number ($PORT) to ~/.easy_php_dev_rc"
   else
-    echo "- Installing dnsmasq via homebrew"
-    brew install dnsmasq > /dev/null 2>&1
+    PORT=`cat ~/.easy_php_dev_rc`
+    echo "- Loaded existing port number ($PORT) from ~/.easy_php_dev_rc"
   fi
 
-  echo "- Creating dnsmasq config in /usr/local/etc/dnsmasq.conf"
-  echo "(When prompted please enter your sudo password so we can create the configs)"
-  sudo echo "" > /usr/local/etc/dnsmasq.conf
-  sudo echo "address=/.dev/127.0.0.1" >> /usr/local/etc/dnsmasq.conf
-  sudo echo "port=4253" >> /usr/local/etc/dnsmasq.conf
-  sudo echo "local=/local/" >> /usr/local/etc/dnsmasq.conf
-  sudo echo "no-resolv" >> /usr/local/etc/dnsmasq.conf
-  sudo echo "no-negcache" >> /usr/local/etc/dnsmasq.conf
-
-  echo "- Setting up dnsmasq to start at boot"
-  sudo cp /usr/local/Cellar/dnsmasq/2.55/uk.org.thekelleys.dnsmasq.plist ~/Library/LaunchAgents/
-  sudo launchctl unload -w ~/Library/LaunchAgents/uk.org.thekelleys.dnsmasq.plist > /dev/null 2>&1
-  sudo launchctl load -w ~/Library/LaunchAgents/uk.org.thekelleys.dnsmasq.plist > /dev/null 2>&1
+  echo "- Setting up easy_php_dev_dns to start at boot"
+  echo "(When prompted please enter your sudo password so we can install)"
+  cp -f ~/.easy_php_dev/lib/ctcherry.easy_php_dns.plist ~/Library/LaunchAgents/ > /dev/null 2>&1
+  
+  BIN_PATH="/Users/$USER/.easy_php_dev/bin/easy_php_dev_dns"
+  
+  sed -i '' "s,_BIN_PATH_,$BIN_PATH,g" ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  sed -i '' "s,_PORT_,$PORT,g" ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  
+  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  launchctl load -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
 
   ########################
   # Apache
@@ -60,7 +56,7 @@ install () {
   sudo mkdir /etc/resolver > /dev/null 2>&1
   
   echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/dev > /dev/null 2>&1
-  echo "port 4253" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
+  echo "port $PORT" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
   echo "order 100" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
   echo "timeout 2" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
   
@@ -83,7 +79,7 @@ uninstall() {
   sudo rm /etc/resolver/dev > /dev/null 2>&1
   
   echo "- Stopping dnsmasq, and preventing from starting at boot"
-  sudo launchctl unload -w ~/Library/LaunchAgents/uk.org.thekelleys.dnsmasq.plist > /dev/null 2>&1
+  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
   
   echo "- Removing dynamic virtual host config /etc/apache2/other/${USER}_hosts.conf"
   sudo rm /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
@@ -93,12 +89,6 @@ uninstall() {
   
   echo "- Restarting Apache"
   sudo apachectl restart
-  
-  echo "- Uninstalling dnsmasq"
-  brew uninstall dnsmasq > /dev/null 2>&1
-  
-  echo "- Removing dnsmasq config /usr/local/etc/dnsmasq.conf"
-  sudo rm /usr/local/etc/dnsmasq.conf > /dev/null 2>&1
   
   echo "Done. Your development sites remain in /Users/$USER/DevSites/"
 }
