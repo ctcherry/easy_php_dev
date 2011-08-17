@@ -24,6 +24,6 @@ mv /tmp/$TAR_DIR_NAME ~/.easy_php_dev > /dev/null 2>&1
 # Cleanup downloaded tar.gz
 rm -Rf /tmp/easy_php_dev.tar.gz > /dev/null 2>&1
 
-echo "easy_php_dev has been installed into ~/.easy_php_dev"
-echo "To install: ~/.easy_php_dev/install.sh"
+echo "easy_php_dev has been downloaded into ~/.easy_php_dev"
+echo "To enable: ~/.easy_php_dev/control.sh enable"
 exit 0
