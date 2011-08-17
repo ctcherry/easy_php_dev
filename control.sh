@@ -38,7 +38,7 @@ enable () {
   echo "UseCanonicalName Off" | sudo tee /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
   echo "VirtualDocumentRoot /Users/$USER/DevSites/%0" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
   echo "<Directory \"/Users/$USER/DevSites/\">" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "    Options Indexes MultiViews" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
+  echo "    Options Indexes FollowSymLinks MultiViews" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
   echo "    AllowOverride All" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
   echo "    Order allow,deny" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
   echo "    Allow from all" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
