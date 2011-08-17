@@ -101,20 +101,20 @@ uninstall() {
 
 if [ "$1" == "enable" ]; then
   enable
-  echo "Done, easy_dev_php enabled. Go to http://test.dev to verify installation"
+  echo "Done, easy_php_dev enabled. Go to http://test.dev to verify installation"
   exit 0
 fi
 
 if [ "$1" == "disable" ]; then
   disable
-  echo "Done, easy_dev_php disabled. Your development sites remain in /Users/$USER/DevSites/"
+  echo "Done, easy_php_dev disabled. Your development sites remain in /Users/$USER/DevSites/"
   exit 0
 fi
 
 if [ "$1" == "uninstall" ]; then
   disable
   uninstall
-  echo "Done, easy_dev_php is uninstalled. Your development sites remain in /Users/$USER/DevSites/"
+  echo "Done, easy_php_dev is uninstalled. Your development sites remain in /Users/$USER/DevSites/"
   echo "If you would like to use it again please reinstall from https://github.com/ctcherry/easy_php_dev"
   exit 0
 fi
