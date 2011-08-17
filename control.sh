@@ -2,13 +2,13 @@
  
 enable () {
 
-  if [ ! -e ~/.easy_php_dev_rc ]; then
+  if [ -e ~/.easy_php_dev_rc ]; then
+    PORT=`cat ~/.easy_php_dev_rc`
+    echo "- Loaded existing port number ($PORT) from ~/.easy_php_dev_rc"
+  else
     PORT=$[ ( $RANDOM % 10000 )  + 10000 ]
     echo $PORT > ~/.easy_php_dev_rc
     echo "- Saved port number ($PORT) to ~/.easy_php_dev_rc"
-  else
-    PORT=`cat ~/.easy_php_dev_rc`
-    echo "- Loaded existing port number ($PORT) from ~/.easy_php_dev_rc"
   fi
 
   echo "- Setting up easy_php_dev_dns to start at boot"
