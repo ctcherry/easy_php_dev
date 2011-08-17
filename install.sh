@@ -12,7 +12,6 @@ install () {
   fi
 
   echo "- Setting up easy_php_dev_dns to start at boot"
-  echo "(When prompted please enter your sudo password so we can install)"
   cp -f ~/.easy_php_dev/lib/ctcherry.easy_php_dns.plist ~/Library/LaunchAgents/ > /dev/null 2>&1
   
   BIN_PATH="/Users/$USER/.easy_php_dev/bin/easy_php_dev_dns"
@@ -28,6 +27,7 @@ install () {
 
   # Enable PHP by uncommenting it
   echo "- Enabing PHP"
+  echo "(When prompted please enter your sudo password so we can install)"
   echo "<IfModule !php5_module>" | sudo tee /etc/apache2/other/load_php.conf > /dev/null 2>&1
   echo "LoadModule php5_module     libexec/apache2/libphp5.so" | sudo tee -a /etc/apache2/other/load_php.conf > /dev/null 2>&1
   echo "</IfModule>" | sudo tee -a /etc/apache2/other/load_php.conf > /dev/null 2>&1
@@ -55,22 +55,20 @@ install () {
 
   sudo mkdir /etc/resolver > /dev/null 2>&1
   
-  echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/dev > /dev/null 2>&1
-  echo "port $PORT" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
-  echo "order 100" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
-  echo "timeout 2" | sudo tee -a /etc/resolver/dev > /dev/null 2>&1
+  RESOLVER_ORDER=$[ ( $RANDOM % 100 )  + 100 ]
   
-  # This part is kinda strange, OSX doesnt pickup the fact that the
-  # file was put there, unless we wait, and then touch it
-  sleep 2
-  sudo touch /etc/resolver/dev
+  echo "nameserver 127.0.0.1" | sudo tee /tmp/resolver_dev > /dev/null 2>&1
+  echo "port $PORT" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
+  echo "order $RESOLVER_ORDER" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
+  echo "timeout 1" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
+  
+  sudo mv /tmp/resolver_dev /etc/resolver/dev > /dev/null 2>&1
   
   echo "- Creating test site phpdevtest.dev"
   mkdir /Users/$USER/DevSites/phpdevtest.dev > /dev/null 2>&1
   echo "<?php phpinfo(); ?>" > /Users/$USER/DevSites/phpdevtest.dev/index.php
   
   echo "Done. Go to http://phpdevtest.dev to verify installation"
-  
 }
 
 uninstall() {
@@ -78,7 +76,7 @@ uninstall() {
   echo "(When prompted please enter your sudo password so we can uninstall)"
   sudo rm /etc/resolver/dev > /dev/null 2>&1
   
-  echo "- Stopping dnsmasq, and preventing from starting at boot"
+  echo "- Stopping easy_php_dns, and preventing from starting at boot"
   launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
   
   echo "- Removing dynamic virtual host config /etc/apache2/other/${USER}_hosts.conf"
