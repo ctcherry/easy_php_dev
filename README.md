@@ -24,6 +24,8 @@ This script will download the latest code, install it into ~/.easy_php_dev and t
 Usage
 -----
 
+After you have run the installer above, you are good to go, the system is already enabled. Create a folder for your site in ~/DevSites and check it out in a browser, and get to work!
+
 Enable dynamic environment and .dev domains:
 
 `$ ~/.easy_php_dev/control.sh enable`
