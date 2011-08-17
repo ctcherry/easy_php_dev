@@ -13,7 +13,7 @@ fi
 rm -Rf /tmp/$TAR_DIR_NAME > /dev/null 2>&1
 
 # Extract download
-tar -zxf /tmp/easy_php_dev.tar.gz > /dev/null 2>&1
+tar -zxf /tmp/easy_php_dev.tar.gz -C /tmp > /dev/null 2>&1
 
 # Cleanup existing installed location
 rm -Rf ~/.easy_php_dev > /dev/null 2>&1
