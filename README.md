@@ -8,7 +8,7 @@ In Your home directory a `DevSites` folder will be created. Inside of there you 
 Requirements
 ------------
 
-- OSX (Tested on Snow Leopard)
+- OSX (Tested on Snow Leopard 10.6 and Lion 10.7)
 - Perl (should already be installed on OSX)
 - Bash (definitely already installed on OSX)
 
