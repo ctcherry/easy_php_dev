@@ -91,9 +91,11 @@ disable() {
 
 uninstall() {
   echo "- Removing ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist"
-  rm -Rf ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  rm -Rf ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
   echo "- Removing ~/.easy_php_dev"
   rm -Rf ~/.easy_php_dev > /dev/null 2>&1
+  echo "- Removing ~/.easy_php_dev_rc"
+  rm -Rf ~/.easy_php_dev_rc > /dev/null 2>&1
 }
 
 
