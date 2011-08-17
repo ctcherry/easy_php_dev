@@ -119,6 +119,5 @@ if [ "$1" == "uninstall" ]; then
   exit 0
 fi
 
-# Default action
-enable
+echo "Usage: ~/.easy_php_dev/control.sh [enable|disable|uninstall]"
 exit 0
