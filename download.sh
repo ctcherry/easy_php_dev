@@ -21,6 +21,9 @@ rm -Rf ~/.easy_php_dev > /dev/null 2>&1
 # Move extracted folder to final location
 mv /tmp/$TAR_DIR_NAME ~/.easy_php_dev > /dev/null 2>&1
 
+# Set executable
+chmod +x ~/.easy_php_dev/control.sh
+
 # Cleanup downloaded tar.gz
 rm -Rf /tmp/easy_php_dev.tar.gz > /dev/null 2>&1
 
