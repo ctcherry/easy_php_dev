@@ -1,6 +1,6 @@
 #!/bin/bash
  
-install () {
+enable () {
 
   if [ ! -e ~/.easy_php_dev_rc ]; then
     PORT=$[ ( $RANDOM % 10000 )  + 10000 ]
@@ -57,21 +57,21 @@ install () {
   
   RESOLVER_ORDER=$[ ( $RANDOM % 100 )  + 100 ]
   
-  echo "nameserver 127.0.0.1" | sudo tee /tmp/resolver_dev > /dev/null 2>&1
-  echo "port $PORT" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
-  echo "order $RESOLVER_ORDER" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
-  echo "timeout 1" | sudo tee -a /tmp/resolver_dev > /dev/null 2>&1
+  rm /tmp/resolver_dev > /dev/null 2>&1
+  
+  echo "nameserver 127.0.0.1" | tee /tmp/resolver_dev > /dev/null 2>&1
+  echo "port $PORT" | tee -a /tmp/resolver_dev > /dev/null 2>&1
+  echo "order $RESOLVER_ORDER" | tee -a /tmp/resolver_dev > /dev/null 2>&1
+  echo "timeout 1" | tee -a /tmp/resolver_dev > /dev/null 2>&1
   
   sudo mv /tmp/resolver_dev /etc/resolver/dev > /dev/null 2>&1
   
   echo "- Creating test site phpdevtest.dev"
   mkdir /Users/$USER/DevSites/phpdevtest.dev > /dev/null 2>&1
   echo "<?php phpinfo(); ?>" > /Users/$USER/DevSites/phpdevtest.dev/index.php
-  
-  echo "Done. Go to http://phpdevtest.dev to verify installation"
 }
 
-uninstall() {
+disable() {
   echo "- Removing .dev resolver /etc/resolver/dev"
   echo "(When prompted please enter your sudo password so we can uninstall)"
   sudo rm /etc/resolver/dev > /dev/null 2>&1
@@ -87,21 +87,35 @@ uninstall() {
   
   echo "- Restarting Apache"
   sudo apachectl restart
-  
-  echo "Done. Your development sites remain in /Users/$USER/DevSites/"
+}
+
+remove() {
+  echo "- Removing ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist"
+  rm -Rf ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist > /dev/null 2>&1
+  echo "- Removing ~/.easy_php_dev"
+  rm -Rf ~/.easy_php_dev > /dev/null 2>&1
 }
 
 
-if [ "$1" == "install" ]; then
-  install
+if [ "$1" == "enable" ]; then
+  enable
+  echo "Done, easy_dev_php enabled. Go to http://phpdevtest.dev to verify installation"
   exit 0
 fi
 
-if [ "$1" == "uninstall" ]; then
-  uninstall
+if [ "$1" == "disable" ]; then
+  disable
+  echo "Done, easy_dev_php disabled. Your development sites remain in /Users/$USER/DevSites/"
+  exit 0
+fi
+
+if [ "$1" == "remove" ]; then
+  disable
+  remove
+  echo "Done, easy_dev_php removed. Your development sites remain in /Users/$USER/DevSites/"
   exit 0
 fi
 
 # Default action
-install
+enable
 exit 0
