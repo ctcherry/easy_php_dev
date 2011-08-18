@@ -1,9 +1,7 @@
 easy_php_dev
 ============
 
-This script sets up a PHP/Apache development environment on OSX.
-
-In your home directory a `DevSites` folder will be created. Inside of there you simply create a folder for each of the sites you want to work on, ending with a with a .dev domain (mysite.dev, or mysite.com.dev), and it becomes your document root. If you navigate to it in a browser on your local machine (http://mysite.dev) it will be immediately available.
+Quickly setup a dynamic multi-site PHP/Apache development environment on OSX.
 
 Requirements
 ------------
@@ -24,7 +22,12 @@ This script will download the latest code, install it into ~/.easy_php_dev and t
 Usage
 -----
 
-After you have run the installer above, you are good to go, the system is already enabled. Create a folder for your site in ~/DevSites and check it out in a browser, and get to work!
+After you have run the installer above, you are good to go, the system is already enabled. In your home directory a new folder has been created: `~/EasyPhpDev/sites`. Inside of there you simply create a folder for each of the sites you want to work on, ending with a with a .dev domain (mysite.dev, or mysite.com.dev), and it becomes your document root. If you navigate to it in a browser on your local machine (http://mysite.dev) it will be immediately available.
+
+Additionally, `~/EasyPhpDev/phplib` has been added to the PHP include_path so you can put any shared libraries in there.
+
+Commands
+--------
 
 Enable dynamic environment and .dev domains:
 
