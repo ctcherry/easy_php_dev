@@ -55,6 +55,7 @@ enable () {
   echo "<IfModule !php5_module>" | sudo tee $LOAD_PHP_CFG > /dev/null 2>&1
   echo "LoadModule php5_module     libexec/apache2/libphp5.so" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
   echo "php_value include_path \".:$PHP_LIB\"" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
+  echo "php_flag short_open_tag on" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
   echo "</IfModule>" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
 
   # Setup vhost_alias for dynamic Virtual Hosts
