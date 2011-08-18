@@ -1,26 +1,50 @@
 #!/bin/bash
- 
+
+EASY_PHP_DEV_ROOT="/Users/$USER/.easy_php_dev"
+EASY_PHP_DEV_CFG="/Users/$USER/.easy_php_dev_rc"
+
+RESOLVER_TLD="dev"
+
+USER_AP_CFG="/etc/apache2/other/${USER}_hosts.conf"
+USER_LAGENT_ROOT="/Users/$USER/Library/LaunchAgents"
+LOAD_PHP_CFG="/etc/apache2/other/load_php.conf"
+
+DNS_BIN_PATH="$EASY_PHP_DEV_ROOT/bin/easy_php_dev_dns"
+
+DNS_PLIST_SRC="$EASY_PHP_DEV_ROOT/lib/ctcherry.easy_php_dev_dns.plist"
+DNS_PLIST_DEST="$USER_LAGENT_ROOT/ctcherry.easy_php_dev_dns.plist"
+
+SITE_ROOT="/Users/$USER/EasyPhpDev/sites"
+PHP_LIB="/Users/$USER/EasyPhpDev/phplib"
+
+TEST_DOMAIN="test.$RESOLVER_TLD"
+
+RESOLVER_ORDER=$[ ( $RANDOM % 100 )  + 100 ]
+RESOLVER_ROOT="/etc/resolver"
+TMP_RESOLVER="/tmp/resolver_$RESOLVER_TLD"
+RESOLVER_DEST="$RESOLVER_ROOT/$RESOLVER_TLD"
+
+HOME_URL="https://github.com/ctcherry/easy_php_dev"
+
 enable () {
 
-  if [ -e ~/.easy_php_dev_rc ]; then
-    PORT=`cat ~/.easy_php_dev_rc`
-    echo "- Loaded existing port number ($PORT) from ~/.easy_php_dev_rc"
+  if [ -e $EASY_PHP_DEV_CFG ]; then
+    PORT=`cat $EASY_PHP_DEV_CFG`
+    echo "- Loaded existing port number ($PORT) from $EASY_PHP_DEV_CFG"
   else
     PORT=$[ ( $RANDOM % 10000 )  + 10000 ]
-    echo $PORT > ~/.easy_php_dev_rc
-    echo "- Saved port number ($PORT) to ~/.easy_php_dev_rc"
+    echo $PORT > $EASY_PHP_DEV_CFG
+    echo "- Saved port number ($PORT) to $EASY_PHP_DEV_CFG"
   fi
 
   echo "- Setting up easy_php_dev_dns to start at boot"
-  cp -f ~/.easy_php_dev/lib/ctcherry.easy_php_dev_dns.plist ~/Library/LaunchAgents/ > /dev/null 2>&1
+  cp -f $DNS_PLIST_SRC $USER_LAGENT_ROOT/ > /dev/null 2>&1
   
-  BIN_PATH="/Users/$USER/.easy_php_dev/bin/easy_php_dev_dns"
+  sed -i '' "s,_BIN_PATH_,$DNS_BIN_PATH,g" $DNS_PLIST_DEST > /dev/null 2>&1
+  sed -i '' "s,_PORT_,$PORT,g" $DNS_PLIST_DEST > /dev/null 2>&1
   
-  sed -i '' "s,_BIN_PATH_,$BIN_PATH,g" ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
-  sed -i '' "s,_PORT_,$PORT,g" ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
-  
-  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
-  launchctl load -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
+  launchctl unload -w $DNS_PLIST_DEST > /dev/null 2>&1
+  launchctl load -w $DNS_PLIST_DEST > /dev/null 2>&1
 
   ########################
   # Apache
@@ -28,21 +52,23 @@ enable () {
   # Enable PHP by uncommenting it
   echo "- Enabing PHP"
   echo "(When prompted please enter your sudo password so we can install)"
-  echo "<IfModule !php5_module>" | sudo tee /etc/apache2/other/load_php.conf > /dev/null 2>&1
-  echo "LoadModule php5_module     libexec/apache2/libphp5.so" | sudo tee -a /etc/apache2/other/load_php.conf > /dev/null 2>&1
-  echo "</IfModule>" | sudo tee -a /etc/apache2/other/load_php.conf > /dev/null 2>&1
+  echo "<IfModule !php5_module>" | sudo tee $LOAD_PHP_CFG > /dev/null 2>&1
+  echo "LoadModule php5_module     libexec/apache2/libphp5.so" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
+  echo "php_value include_path \".:$PHP_LIB\"" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
+  echo "</IfModule>" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
 
   # Setup vhost_alias for dynamic Virtual Hosts
-  echo "- Setting up dynamic VirtualHosts in /Users/$USER/DevSites/ (config: /etc/apache2/other/${USER}_hosts.conf)"
-  mkdir /Users/$USER/DevSites/ > /dev/null 2>&1
-  echo "UseCanonicalName Off" | sudo tee /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "VirtualDocumentRoot /Users/$USER/DevSites/%0" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "<Directory \"/Users/$USER/DevSites/\">" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "    Options Indexes MultiViews" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "    AllowOverride All" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "    Order allow,deny" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "    Allow from all" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
-  echo "</Directory>" | sudo tee -a /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
+  echo "- Setting up dynamic VirtualHosts in $SITE_ROOT/ (config: $USER_AP_CFG)"
+  mkdir -p $SITE_ROOT > /dev/null 2>&1
+  mkdir -p $PHP_LIB > /dev/null 2>&1
+  echo "UseCanonicalName Off" | sudo tee $USER_AP_CFG > /dev/null 2>&1
+  echo "VirtualDocumentRoot $SITE_ROOT/%0" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "<Directory \"$SITE_ROOT/\">" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    Options Indexes MultiViews" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    AllowOverride All" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    Order allow,deny" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    Allow from all" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "</Directory>" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
 
   # Start Apache
   echo "- Restarting Apache"
@@ -51,73 +77,83 @@ enable () {
   ########################
   # resolver system
 
-  echo "- Setting up .dev resolver in /etc/resolver/dev"
+  echo "- Setting up .dev resolver in $RESOLVER_DEST"
 
-  sudo mkdir /etc/resolver > /dev/null 2>&1
+  sudo mkdir -p $RESOLVER_ROOT > /dev/null 2>&1
   
-  RESOLVER_ORDER=$[ ( $RANDOM % 100 )  + 100 ]
+  rm $TMP_RESOLVER > /dev/null 2>&1
   
-  rm /tmp/resolver_dev > /dev/null 2>&1
+  echo "nameserver 127.0.0.1" | tee $TMP_RESOLVER > /dev/null 2>&1
+  echo "port $PORT" | tee -a $TMP_RESOLVER > /dev/null 2>&1
+  echo "order $RESOLVER_ORDER" | tee -a $TMP_RESOLVER > /dev/null 2>&1
+  echo "timeout 1" | tee -a $TMP_RESOLVER > /dev/null 2>&1
   
-  echo "nameserver 127.0.0.1" | tee /tmp/resolver_dev > /dev/null 2>&1
-  echo "port $PORT" | tee -a /tmp/resolver_dev > /dev/null 2>&1
-  echo "order $RESOLVER_ORDER" | tee -a /tmp/resolver_dev > /dev/null 2>&1
-  echo "timeout 1" | tee -a /tmp/resolver_dev > /dev/null 2>&1
+  sudo mv $TMP_RESOLVER $RESOLVER_DEST > /dev/null 2>&1
   
-  sudo mv /tmp/resolver_dev /etc/resolver/dev > /dev/null 2>&1
-  
-  echo "- Creating test site test.dev"
-  mkdir /Users/$USER/DevSites/test.dev > /dev/null 2>&1
-  echo "<?php phpinfo(); ?>" > /Users/$USER/DevSites/test.dev/index.php
+  echo "- Creating test site $TEST_DOMAIN"
+  mkdir $SITE_ROOT/$TEST_DOMAIN > /dev/null 2>&1
+  echo "<?php phpinfo(); ?>" > $SITE_ROOT/$TEST_DOMAIN/index.php
 }
 
 disable() {
-  echo "- Removing .dev resolver /etc/resolver/dev"
+  echo "- Removing .$RESOLVER_TLD resolver $RESOLVER_DEST"
   echo "(When prompted please enter your sudo password so we can uninstall)"
-  sudo rm /etc/resolver/dev > /dev/null 2>&1
+  sudo rm $RESOLVER_DEST > /dev/null 2>&1
   
   echo "- Stopping easy_php_dns, and preventing from starting at boot"
-  launchctl unload -w ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
+  launchctl unload -w $DNS_PLIST_DEST > /dev/null 2>&1
   
-  echo "- Removing dynamic virtual host config /etc/apache2/other/${USER}_hosts.conf"
-  sudo rm /etc/apache2/other/${USER}_hosts.conf > /dev/null 2>&1
+  echo "- Removing dynamic virtual host config $USER_AP_CFG"
+  sudo rm $USER_AP_CFG > /dev/null 2>&1
   
   echo "- Disabing PHP"
-  sudo rm /etc/apache2/other/load_php.conf > /dev/null 2>&1
+  sudo rm $LOAD_PHP_CFG > /dev/null 2>&1
   
   echo "- Restarting Apache"
   sudo apachectl restart
 }
 
 uninstall() {
-  echo "- Removing ~/Library/LaunchAgents/ctcherry.easy_php_dns.plist"
-  rm -Rf ~/Library/LaunchAgents/ctcherry.easy_php_dev_dns.plist > /dev/null 2>&1
-  echo "- Removing ~/.easy_php_dev"
-  rm -Rf ~/.easy_php_dev > /dev/null 2>&1
-  echo "- Removing ~/.easy_php_dev_rc"
-  rm -Rf ~/.easy_php_dev_rc > /dev/null 2>&1
+  echo "- Removing $DNS_PLIST_DEST"
+  rm -Rf $DNS_PLIST_DEST > /dev/null 2>&1
+  echo "- Removing $EASY_PHP_DEV_ROOT"
+  rm -Rf $EASY_PHP_DEV_ROOT > /dev/null 2>&1
+  echo "- Removing $EASY_PHP_DEV_CFG"
+  rm -Rf $EASY_PHP_DEV_CFG > /dev/null 2>&1
 }
 
 
 if [ "$1" == "enable" ]; then
   enable
-  echo "Done, easy_php_dev enabled. Go to http://test.dev to verify installation"
+  echo "Done, easy_php_dev enabled. Go to http://$TEST_DOMAIN to verify installation"
   exit 0
 fi
 
 if [ "$1" == "disable" ]; then
   disable
-  echo "Done, easy_php_dev disabled. Your development sites remain in /Users/$USER/DevSites/"
+  echo "Done, easy_php_dev disabled. Your development sites remain in $SITE_ROOT/"
   exit 0
 fi
 
 if [ "$1" == "uninstall" ]; then
   disable
   uninstall
-  echo "Done, easy_php_dev is uninstalled. Your development sites remain in /Users/$USER/DevSites/"
-  echo "If you would like to use it again please reinstall from https://github.com/ctcherry/easy_php_dev"
+  echo "Done, easy_php_dev is uninstalled. Your development sites remain in $SITE_ROOT/"
+  echo "If you would like to use it again please reinstall from $HOME_URL"
   exit 0
 fi
 
-echo "Usage: ~/.easy_php_dev/control.sh [enable|disable|uninstall]"
+# This is really only meant to be used while developing this package
+if [ "$1" == "dev_reset" ]; then
+  if [ -e $EASY_PHP_DEV_ROOT ]; then
+    disable
+    uninstall
+  fi
+  CURRENT_DIR="$( cd -P "$( dirname "$0" )" && pwd )"
+  cp -R $CURRENT_DIR $EASY_PHP_DEV_ROOT > /dev/null 2>&1
+  chmod +x $EASY_PHP_DEV_ROOT/control.sh
+  exec ~/.easy_php_dev/control.sh enable
+fi
+
+echo "Usage: control.sh [enable|disable|uninstall]"
 exit 0
