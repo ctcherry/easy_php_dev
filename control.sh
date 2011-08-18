@@ -64,7 +64,7 @@ enable () {
   echo "UseCanonicalName Off" | sudo tee $USER_AP_CFG > /dev/null 2>&1
   echo "VirtualDocumentRoot $SITE_ROOT/%0" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "<Directory \"$SITE_ROOT/\">" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
-  echo "    Options Indexes MultiViews" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    Options ExecCGI Indexes FollowSymLinks MultiViews" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "    AllowOverride All" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "    Order allow,deny" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "    Allow from all" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
