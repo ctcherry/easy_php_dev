@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$TMP_DL="/tmp/easy_php_dev.tar.gz"
-$DL_URL="https://github.com/ctcherry/easy_php_dev/tarball/master" 
+TMP_DL="/tmp/easy_php_dev.tar.gz"
+DL_URL="https://github.com/ctcherry/easy_php_dev/tarball/master" 
 
 curl -o $TMP_DL -L $DL_URL > /dev/null 2>&1
 
