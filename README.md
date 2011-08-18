@@ -24,7 +24,7 @@ Usage
 
 After you have run the installer above, you are good to go, the system is already enabled. In your home directory a new folder has been created: `~/EasyPhpDev/sites`. Inside of there you simply create a folder for each of the sites you want to work on, ending with a with a .dev domain (mysite.dev, or mysite.com.dev), and it becomes your document root. If you navigate to it in a browser on your local machine (http://mysite.dev) it will be immediately available.
 
-Additionally, `~/EasyPhpDev/phplib` has been added to the PHP include_path so you can put any shared libraries in there.
+Additionally, `~/EasyPhpDev/phplib` has been added to the PHP include_path so you can put any shared libraries in there. And `short_open_tag` is enabled.
 
 Commands
 --------
