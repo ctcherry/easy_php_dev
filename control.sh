@@ -127,17 +127,17 @@ uninstall() {
   rm -Rf $EASY_PHP_DEV_CFG > /dev/null 2>&1
 }
 
-set_ip_vhost() {
-  local domain=$1
-  if [ -e $SITE_ROOT/$domain ]; then
-    echo "(When prompted please enter your sudo password so we can configure)"
-    echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_DEF_CFG > /dev/null 2>&1
-    sudo apachectl restart
-    echo "External site set to $domain"
-  else
-    echo "$domain does not exist, external site not set"
-  fi
-}
+# set_ip_vhost() {
+#   local domain=$1
+#   if [ -e $SITE_ROOT/$domain ]; then
+#     echo "(When prompted please enter your sudo password so we can configure)"
+#     echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_DEF_CFG > /dev/null 2>&1
+#     sudo apachectl restart
+#     echo "External site set to $domain"
+#   else
+#     echo "$domain does not exist, external site not set"
+#   fi
+# }
 
 if [ "$1" == "enable" ]; then
   enable
@@ -145,14 +145,14 @@ if [ "$1" == "enable" ]; then
   exit 0
 fi
 
-if [ "$1" == "default" ]; then
-  if [ "$2" == "" ]; then
-    echo "Usage: control.sh default [domain.dev]"
-  else
-    set_ip_vhost $2
-  fi
-  exit 0
-fi
+# if [ "$1" == "default" ]; then
+#   if [ "$2" == "" ]; then
+#     echo "Usage: control.sh default [domain.dev]"
+#   else
+#     set_ip_vhost $2
+#   fi
+#   exit 0
+# fi
 
 if [ "$1" == "disable" ]; then
   disable
