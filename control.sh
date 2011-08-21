@@ -108,6 +108,9 @@ disable() {
   echo "- Removing dynamic virtual host config $USER_AP_CFG"
   sudo rm $USER_AP_CFG > /dev/null 2>&1
   
+  echo "- Removing default virtual host config $USER_AP_DEF_CFG"
+  sudo rm $USER_AP_DEF_CFG > /dev/null 2>&1
+  
   echo "- Disabing PHP"
   sudo rm $LOAD_PHP_CFG > /dev/null 2>&1
   
@@ -124,7 +127,7 @@ uninstall() {
   rm -Rf $EASY_PHP_DEV_CFG > /dev/null 2>&1
 }
 
-set_ip_vhost(){
+set_ip_vhost() {
   local domain=$1
   if [ -e $SITE_ROOT/$domain ]; then
     echo "(When prompted please enter your sudo password so we can configure)"
