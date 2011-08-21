@@ -5,6 +5,7 @@ EASY_PHP_DEV_CFG="/Users/$USER/.easy_php_dev_rc"
 
 RESOLVER_TLD="dev"
 
+USER_AP_DEF_CFG="/etc/apache2/other/${USER}_zdefault.conf"
 USER_AP_CFG="/etc/apache2/other/${USER}_hosts.conf"
 USER_LAGENT_ROOT="/Users/$USER/Library/LaunchAgents"
 LOAD_PHP_CFG="/etc/apache2/other/load_php.conf"
@@ -123,10 +124,30 @@ uninstall() {
   rm -Rf $EASY_PHP_DEV_CFG > /dev/null 2>&1
 }
 
+set_ip_vhost(){
+  local domain=$1
+  if [ -e $SITE_ROOT/$domain ]; then
+    echo "(When prompted please enter your sudo password so we can configure)"
+    echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_DEF_CFG > /dev/null 2>&1
+    sudo apachectl restart
+    echo "External site set to $domain"
+  else
+    echo "$domain does not exist, external site not set"
+  fi
+}
 
 if [ "$1" == "enable" ]; then
   enable
   echo "Done, easy_php_dev enabled. Go to http://$TEST_DOMAIN to verify installation"
+  exit 0
+fi
+
+if [ "$1" == "default" ]; then
+  if [ "$2" == "" ]; then
+    echo "Usage: control.sh default [domain.dev]"
+  else
+    set_ip_vhost $2
+  fi
   exit 0
 fi
 
@@ -156,5 +177,5 @@ if [ "$1" == "dev_reset" ]; then
   exec ~/.easy_php_dev/control.sh enable
 fi
 
-echo "Usage: control.sh [enable|disable|uninstall]"
+echo "Usage: control.sh [enable|disable|default|uninstall]"
 exit 0
