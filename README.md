@@ -37,6 +37,10 @@ Disable dynamic environment and .dev domains:
 
 `$ ~/.easy_php_dev/control.sh disable`
 
+Set default host (if accessed via IP or provided a domain that doesn't exist in `~/EasyPhpDev/sites`, this is the host that is used):
+
+`$ ~/.easy_php_dev/control.sh default domain.dev`
+
 Disable and uninstall everything (if you run this command you will have to reinstall):
 
 `$ ~/.easy_php_dev/control.sh uninstall`
