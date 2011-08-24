@@ -39,6 +39,7 @@ enable () {
   fi
 
   echo "- Setting up easy_php_dev_dns to start at boot"
+  mkdir -p $USER_LAGENT_ROOT
   cp -f $DNS_PLIST_SRC $USER_LAGENT_ROOT/ > /dev/null 2>&1
   
   sed -i '' "s,_BIN_PATH_,$DNS_BIN_PATH,g" $DNS_PLIST_DEST > /dev/null 2>&1
