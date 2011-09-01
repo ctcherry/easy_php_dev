@@ -5,7 +5,7 @@ EASY_PHP_DEV_CFG="/Users/$USER/.easy_php_dev_rc"
 
 RESOLVER_TLD="dev"
 
-USER_AP_DEF_CFG="/etc/apache2/other/${USER}_zdefault.conf"
+USER_AP_FORCE_CFG="/etc/apache2/other/${USER}_zforce.conf"
 USER_AP_CFG="/etc/apache2/other/${USER}_hosts.conf"
 USER_LAGENT_ROOT="/Users/$USER/Library/LaunchAgents"
 LOAD_PHP_CFG="/etc/apache2/other/load_php.conf"
@@ -108,8 +108,8 @@ disable() {
   echo "- Removing dynamic virtual host config $USER_AP_CFG"
   sudo rm $USER_AP_CFG > /dev/null 2>&1
   
-  echo "- Removing default virtual host config $USER_AP_DEF_CFG"
-  sudo rm $USER_AP_DEF_CFG > /dev/null 2>&1
+  echo "- Removing force virtual host config $USER_AP_FORCE_CFG"
+  sudo rm $USER_AP_FORCE_CFG > /dev/null 2>&1
   
   echo "- Disabing PHP"
   sudo rm $LOAD_PHP_CFG > /dev/null 2>&1
@@ -120,24 +120,31 @@ disable() {
 
 uninstall() {
   echo "- Removing $DNS_PLIST_DEST"
-  rm -Rf $DNS_PLIST_DEST > /dev/null 2>&1
+  rm $DNS_PLIST_DEST > /dev/null 2>&1
   echo "- Removing $EASY_PHP_DEV_ROOT"
   rm -Rf $EASY_PHP_DEV_ROOT > /dev/null 2>&1
   echo "- Removing $EASY_PHP_DEV_CFG"
-  rm -Rf $EASY_PHP_DEV_CFG > /dev/null 2>&1
+  rm $EASY_PHP_DEV_CFG > /dev/null 2>&1
 }
 
-# set_ip_vhost() {
-#   local domain=$1
-#   if [ -e $SITE_ROOT/$domain ]; then
-#     echo "(When prompted please enter your sudo password so we can configure)"
-#     echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_DEF_CFG > /dev/null 2>&1
-#     sudo apachectl restart
-#     echo "External site set to $domain"
-#   else
-#     echo "$domain does not exist, external site not set"
-#   fi
-# }
+set_ip_vhost() {
+  local domain=$1
+  if [ -e $SITE_ROOT/$domain ]; then
+    echo "(When prompted please enter your sudo password so we can configure)"
+    echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_FORCE_CFG > /dev/null 2>&1
+    sudo apachectl restart
+    echo "Force site mode enabled. All web requests (using any domain or IP) to this computer will resolve to $domain"
+  else
+    echo "$domain does not exist, Force mode not set"
+  fi
+}
+
+unset_ip_vhost() {
+  echo "(When prompted please enter your sudo password so we can configure)"
+  sudo rm $USER_AP_FORCE_CFG > /dev/null 2>&1
+  sudo apachectl restart
+  echo "Force site mode disabled"
+}
 
 if [ "$1" == "enable" ]; then
   enable
@@ -145,14 +152,20 @@ if [ "$1" == "enable" ]; then
   exit 0
 fi
 
-# if [ "$1" == "default" ]; then
-#   if [ "$2" == "" ]; then
-#     echo "Usage: control.sh default [domain.dev]"
-#   else
-#     set_ip_vhost $2
-#   fi
-#   exit 0
-# fi
+if [ "$1" == "force" ]; then
+  if [ "$2" == "" ]; then
+    echo "Usage: control.sh force [domain.dev|off]"
+    exit 0
+  fi
+  
+  if [ "$2" == "off" ]; then
+    unset_ip_vhost
+    exit 0
+  fi
+  
+  set_ip_vhost $2
+  exit 0
+fi
 
 if [ "$1" == "disable" ]; then
   disable
