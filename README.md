@@ -37,9 +37,13 @@ Disable dynamic environment and .dev domains:
 
 `$ ~/.easy_php_dev/control.sh disable`
 
-Set default host (if accessed via IP or provided a domain that doesn't exist in `~/EasyPhpDev/sites`, this is the host that is used):
+Set force mode. When enabled, all local web requests, no matter what domain or IP is used will resolve to the specified site. This is useful for viewing your dev site in VMs and from other computers:
 
-`$ ~/.easy_php_dev/control.sh default domain.dev`
+`$ ~/.easy_php_dev/control.sh force domain.dev`
+
+Disable force mode. This returns the environment to its normal state:
+
+`$ ~/.easy_php_dev/control.sh force off`
 
 Disable and uninstall everything (if you run this command you will have to reinstall):
 
