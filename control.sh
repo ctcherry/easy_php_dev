@@ -52,7 +52,7 @@ enable () {
 
   # Enable PHP by uncommenting it
   echo "- Enabing PHP"
-  echo "(When prompted please enter your sudo password so we can install)"
+  echo "(If prompted, please enter your sudo password so we can install)"
   echo "<IfModule !php5_module>" | sudo tee $LOAD_PHP_CFG > /dev/null 2>&1
   echo "LoadModule php5_module     libexec/apache2/libphp5.so" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
   echo "php_value include_path \".:$PHP_LIB\"" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
@@ -99,7 +99,7 @@ enable () {
 
 disable() {
   echo "- Removing .$RESOLVER_TLD resolver $RESOLVER_DEST"
-  echo "(When prompted please enter your sudo password so we can uninstall)"
+  echo "(If prompted, please enter your sudo password so we can uninstall)"
   sudo rm $RESOLVER_DEST > /dev/null 2>&1
   
   echo "- Stopping easy_php_dns, and preventing from starting at boot"
@@ -130,7 +130,7 @@ uninstall() {
 set_ip_vhost() {
   local domain=$1
   if [ -e $SITE_ROOT/$domain ]; then
-    echo "(When prompted please enter your sudo password so we can configure)"
+    echo "(If prompted, please enter your sudo password so we can configure)"
     echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_FORCE_CFG > /dev/null 2>&1
     sudo apachectl restart
     echo "Force site mode enabled. All web requests (using any domain or IP) to this computer will resolve to $domain"
@@ -140,7 +140,7 @@ set_ip_vhost() {
 }
 
 unset_ip_vhost() {
-  echo "(When prompted please enter your sudo password so we can configure)"
+  echo "(If prompted, please enter your sudo password so we can configure)"
   sudo rm $USER_AP_FORCE_CFG > /dev/null 2>&1
   sudo apachectl restart
   echo "Force site mode disabled"
