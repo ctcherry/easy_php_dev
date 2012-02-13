@@ -194,5 +194,5 @@ if [ "$1" == "dev_reset" ]; then
   exec ~/.easy_php_dev/control.sh enable
 fi
 
-echo "Usage: control.sh [enable|disable|default|uninstall]"
+echo "Usage: control.sh [enable|disable|force|uninstall]"
 exit 0
