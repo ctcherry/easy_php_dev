@@ -130,6 +130,10 @@ uninstall() {
 
 set_ip_vhost() {
   local domain=$1
+  domain=${domain/https\:\/\//}
+  domain=${domain/http\:\/\//}
+  domain=${domain//\//}
+  
   if [ -e $SITE_ROOT/$domain ]; then
     echo "(If prompted, please enter your sudo password so we can configure)"
     echo "VirtualDocumentRootIP $SITE_ROOT/$domain" | sudo tee $USER_AP_FORCE_CFG > /dev/null 2>&1
