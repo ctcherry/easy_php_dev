@@ -6,7 +6,7 @@ Quickly setup a dynamic multi-site PHP/Apache development environment on OSX.
 Requirements
 ------------
 
-- OSX (Tested on Snow Leopard 10.6, Lion 10.7 and Mountain Lion 10.8)
+- OSX (Tested on Snow Leopard 10.6, Lion 10.7, Mountain Lion 10.8 and Mavericks 10.9)
 - Perl (should already be installed on OSX)
 - Bash (definitely already installed on OSX)
 
