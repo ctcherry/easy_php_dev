@@ -15,7 +15,7 @@ Install
 
 One-liner:
 
-`$ bash < <(curl -s https://raw.github.com/ctcherry/easy_php_dev/master/install.sh)`
+`$ bash < <(curl -s https://raw.githubusercontent.com/ctcherry/easy_php_dev/master/install.sh)`
 
 This script will download the latest code, install it into ~/.easy_php_dev and then run the `enable` command described in the Usage section below. Feel free to view the [install.sh](https://github.com/ctcherry/easy_php_dev/blob/master/install.sh) and [download.sh](https://github.com/ctcherry/easy_php_dev/blob/master/download.sh) scripts first to make sure they are safe.
 
