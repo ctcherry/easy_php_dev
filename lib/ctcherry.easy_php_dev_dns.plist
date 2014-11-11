@@ -10,9 +10,6 @@
       <string>_PORT_</string>
     </array>
     <key>KeepAlive</key>
-    <dict>
-      <key>NetworkState</key>
-      <true/>
-    </dict>
+    <true/>
   </dict>
 </plist>
