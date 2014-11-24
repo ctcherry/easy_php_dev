@@ -77,6 +77,9 @@ enable () {
   echo "    AllowOverride All" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "    Order allow,deny" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "    Allow from all" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    <IfVersion >= 2.4>" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "        Require all granted" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
+  echo "    </IfVersion>" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
   echo "</Directory>" | sudo tee -a $USER_AP_CFG > /dev/null 2>&1
 
   # Start Apache
