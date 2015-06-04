@@ -9,6 +9,7 @@ USER_AP_FORCE_CFG="/etc/apache2/other/${USER}_zforce.conf"
 USER_AP_CFG="/etc/apache2/other/${USER}_hosts.conf"
 USER_LAGENT_ROOT="/Users/$USER/Library/LaunchAgents"
 LOAD_PHP_CFG="/etc/apache2/other/load_php.conf"
+LOAD_REWRITE_CFG="/etc/apache2/other/load_rewrite.conf"
 LOAD_VHOST_ALIAS_CFG="/etc/apache2/other/load_vhost_alias.conf"
 
 DNS_BIN_PATH="$EASY_PHP_DEV_ROOT/bin/easy_php_dev_dns"
@@ -60,6 +61,11 @@ enable () {
   echo "php_value include_path \".:$PHP_LIB\"" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
   echo "php_flag short_open_tag on" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
   echo "</IfModule>" | sudo tee -a $LOAD_PHP_CFG > /dev/null 2>&1
+
+  echo "- Enabing mod_rewrite"
+  echo "<IfModule !rewrite_module>" | sudo tee $LOAD_REWRITE_CFG > /dev/null 2>&1
+  echo "LoadModule rewrite_module   libexec/apache2/mod_rewrite.so" | sudo tee -a $LOAD_REWRITE_CFG > /dev/null 2>&1
+  echo "</IfModule>" | sudo tee -a $LOAD_REWRITE_CFG > /dev/null 2>&1
 
   echo "- Enabing mod_vhost_alias"
   echo "<IfModule !vhost_alias_module>" | sudo tee $LOAD_VHOST_ALIAS_CFG > /dev/null 2>&1
@@ -123,6 +129,9 @@ disable() {
   
   echo "- Disabing PHP"
   sudo rm $LOAD_PHP_CFG > /dev/null 2>&1
+  
+  echo "- Disabing mod_rewrite"
+  sudo rm $LOAD_REWRITE_CFG > /dev/null 2>&1
   
   echo "- Disabing mod_vhost_alias"
   sudo rm $LOAD_VHOST_ALIAS_CFG > /dev/null 2>&1
