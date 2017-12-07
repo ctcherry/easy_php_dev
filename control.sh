@@ -3,7 +3,7 @@
 EASY_PHP_DEV_ROOT="/Users/$USER/.easy_php_dev"
 EASY_PHP_DEV_CFG="/Users/$USER/.easy_php_dev_rc"
 
-RESOLVER_TLD="dev"
+RESOLVER_TLD="loc"
 
 USER_AP_FORCE_CFG="/etc/apache2/other/${USER}_zforce.conf"
 USER_AP_CFG="/etc/apache2/other/${USER}_hosts.conf"
@@ -95,7 +95,7 @@ enable () {
   ########################
   # resolver system
 
-  echo "- Setting up .dev resolver in $RESOLVER_DEST"
+  echo "- Setting up .loc resolver in $RESOLVER_DEST"
 
   sudo mkdir -p $RESOLVER_ROOT > /dev/null 2>&1
   
@@ -180,7 +180,7 @@ fi
 
 if [ "$1" == "force" ]; then
   if [ "$2" == "" ]; then
-    echo "Usage: control.sh force [domain.dev|off]"
+    echo "Usage: control.sh force [domain.loc|off]"
     exit 0
   fi
   
