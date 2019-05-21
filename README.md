@@ -1,3 +1,5 @@
+NOTE: Consider using the docker based [localdev](https://github.com/ctcherry/localdev) instead!
+
 easy_php_dev
 ============
 
